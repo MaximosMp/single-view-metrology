@@ -1,0 +1,15 @@
+# Settings for scripts/measure_object.py.
+#
+# Every key is required: a missing or misspelled one stops the run and names
+# it. Relative paths resolve against this file.
+
+# The camera, board, depth model and board limits all come from here.
+depth_config: depth.yaml
+output: ../results/measurements.yaml
+
+# Depth closer than this to the object's outline, in px of the photo, is not
+# used; each hull corner's depth is extrapolated from the interior beyond it.
+# Depth blurs across an outline by a few network pixels; at 756 px for a
+# 5712 px photo one network pixel is about 7.5 px, so 24 px clears roughly
+# three. To be confirmed on photos of objects of known size.
+edge_margin_px: 24

@@ -1,0 +1,15 @@
+# The printed board: OpenCV's 4x11 asymmetric circle grid.
+#
+# pitch_cm is half the centre-to-centre distance between two neighbouring dots
+# in one row. It does not touch the intrinsics, but every metric result scales
+# with it, so measure it on the actual printout and update it after a reprint.
+cols: 4
+rows: 11
+# Check: the centre of the first row to the centre of the last (11th) row spans
+# 10 pitches, so with 0.846 it measures 8.46 cm.
+#
+# 0.846 comes from two objects of known size (a set square and a ruler) lying
+# beside the board: measured through the board's plane alone, both came out
+# 1.5-2% short at the nominal 0.83, in every photo. A ruler held to the printout
+# reads about 0.85, which agrees but cannot resolve the third decimal.
+pitch_cm: 0.846

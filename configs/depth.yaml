@@ -1,0 +1,23 @@
+# Settings for scripts/estimate_depth.py.
+#
+# Every key is required: a missing or misspelled one stops the run and names
+# it. Relative paths resolve against this file.
+
+# The board, its detection settings and the calibration file all come from
+# here, so a photo is read exactly the way the calibration was.
+calibration_config: calibration.yaml
+output: ../results/depth
+
+# Long side in px a photo is reduced to, by area averaging, before the depth
+# network. The network then resamples to its own working size without
+# antialiasing, so handing it a full-resolution photo would alias. 1904 is a
+# third of this camera's 5712 px, the size the model was evaluated at.
+process_res: 1904
+
+# A photo fails rather than yielding a number its board does not support.
+# On the calibration photos the pose error is 0.55-1.18 px and the board error
+# after correction 0.2-2.2%.
+limits:
+  max_pose_error_px: 2.0
+  # Mean relative depth error across the board after scaling, as a fraction.
+  max_board_error: 0.05

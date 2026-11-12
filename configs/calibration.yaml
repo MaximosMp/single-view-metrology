@@ -1,0 +1,31 @@
+# Settings for scripts/calibrate_camera.py.
+#
+# Every key is required: a missing or misspelled one stops the run and names
+# it. Relative paths resolve against this file.
+
+images: ../images/calibration_images
+output: ../camera_parameters/iphone_camera.yaml
+board: boards/circle_grid_4x11.yaml
+
+# Long edge in px to calibrate at, or null for the native sensor resolution.
+# Native is the right default: dot centres localise best there, and the
+# intrinsics for any smaller size follow by scaling fx, fy, cx and cy by the
+# resize factor. Distortion acts on normalised coordinates and does not change.
+max_long_edge: null
+
+detection:
+  # Dot diameters to try, as fractions of the image's long edge, largest first.
+  # At 5712 px they are about 366, 183, 91, 46 and 23 px, which covers this
+  # board from roughly 5 cm to 1 m away.
+  dot_sizes: [0.064, 0.032, 0.016, 0.008, 0.004]
+  # Each try accepts dots from this factor below its diameter to this factor
+  # above, so neighbouring tries overlap.
+  size_tolerance: 1.7
+
+# Views are left out one at a time, worst first, until both limits hold. Both
+# are RMS reprojection errors, so they compare directly. Most views of the
+# current set score 0.5-1.0 px; the one at 1.15 px is left out.
+rejection:
+  max_view_error_px: 1.0
+  max_rms_px: 1.0
+  min_views: 5

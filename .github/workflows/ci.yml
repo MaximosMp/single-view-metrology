@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# The job only reads the code; it needs no write access to the repository.
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      # Actions pinned to commit SHAs: a tag can be moved to malicious code, a SHA cannot.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
+        with:
+          version: "0.13.5"
+          enable-cache: true
+
+      - name: Sync dependencies
+        run: uv sync --locked
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Check formatting
+        run: uv run ruff format --check .
+
+      # Names defined and never used. The first pass covers production code only,
+      # so a test call cannot keep package code alive; the second adds tests/ to
+      # catch dead test helpers. Stale whitelist entries are caught by
+      # tests/test_vulture_whitelist.py, since vulture never reports them itself.
+      - name: Dead code
+        run: |
+          uv run vulture
+          uv run vulture src scripts tests vulture_whitelist.py
+
+      # Copy-pasted blocks of 6+ lines across the package, scripts and tests.
+      - name: Duplicate code
+        run: uv run pylint --disable=all --enable=duplicate-code --min-similarity-lines=6 src/svmetrology scripts tests
+
+      # Imports missing from pyproject.toml, and declared packages nothing imports.
+      - name: Dependency hygiene
+        run: uv run deptry .
+
+      - name: Test
+        run: uv run pytest

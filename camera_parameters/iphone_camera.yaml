@@ -1,0 +1,32 @@
+image_size:
+  width: 5712
+  height: 4284
+intrinsics_px:
+  fx: 4113.233389549886
+  fy: 4124.833691970885
+  cx: 2801.4104196015237
+  cy: 2148.8134786520036
+distortion:
+  k1: 0.2565984150480116
+  k2: -1.089146929076298
+  p1: 0.001051817927195171
+  p2: -0.0041960929756115735
+  k3: 1.2391754079187665
+fit:
+  rms_px: 0.7347457982197712
+  views_used:
+  - IMG_5010.HEIC
+  - IMG_5011.HEIC
+  - IMG_5013.HEIC
+  - IMG_5014.HEIC
+  - IMG_5015.HEIC
+  - IMG_5016.HEIC
+  - IMG_5017.HEIC
+  - IMG_5018.HEIC
+  - IMG_5019.HEIC
+  - IMG_5020.HEIC
+  - IMG_5021.HEIC
+board:
+  cols: 4
+  rows: 11
+  pitch_cm: 0.846

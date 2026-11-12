@@ -1,0 +1,79 @@
+[project]
+name = "single-view-metrology"
+version = "0.1.0"
+description = "Measure real-world object dimensions from a single photograph containing a calibration pattern."
+requires-python = ">=3.12"
+dependencies = [
+  "huggingface-hub>=2.0.0",
+  "numpy>=1.26",
+  "omegaconf>=2.3.0",
+  "opencv-python-headless",
+  "pyyaml>=6.0.2",
+  "safetensors>=0.8.0",
+  "torch>=2.14.0",
+  "typer>=0.24.1",
+]
+
+[dependency-groups]
+dev = [
+  "deptry>=0.20",
+  "pylint>=3.3",
+  "pytest>=8.0",
+  "ruff>=0.9",
+  "vulture>=2.14",
+]
+
+[tool.uv]
+exclude-newer = "30 days"
+# Exempt from the cooldown, because the fix is newer than 30 days:
+# certifi 2026.10.19 drops the compromised eMudhra/emSign root CA; filelock and
+# setuptools, both pulled in by torch, have advisories fixed in 4.2.1 and 84.1.0.
+exclude-newer-package = { certifi = false, filelock = false, setuptools = false }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/svmetrology"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+src = ["src", "scripts", "tests"]
+
+[tool.ruff.lint]
+# ARG/ERA/PIE/RET/PERF are the dead-code half: unused arguments, commented-out
+# code, redundant branches and needless intermediates. F covers unused imports
+# and variables.
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "C4", "D", "TID252", "ARG", "ERA", "PIE", "RET", "PERF"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D103"]  # test names document themselves
+"vulture_whitelist.py" = ["B018"]  # bare references are what a whitelist is made of
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.vulture]
+# Production code only: scanning tests here would count a test call as a use and
+# hide package code that nothing at runtime reaches. CI runs a second pass with
+# tests/ added, which catches dead test helpers.
+paths = ["src", "scripts", "vulture_whitelist.py"]
+min_confidence = 60
+
+[tool.deptry]
+known_first_party = ["svmetrology"]
+
+[tool.deptry.package_module_name_map]
+# PyPI name -> import name, so deptry does not report these as unused/undeclared.
+opencv-python-headless = "cv2"
+pyyaml = "yaml"
